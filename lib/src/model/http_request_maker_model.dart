@@ -59,13 +59,14 @@ class HttpRequestMaker<T> {
     }
   }
 
-  Future<void> deleteById(String subUrl) async {
+  Future<T?> deleteById(String subUrl) async {
     try {
       String url = "$baseUrl$subUrl";
       _checkUrl(url);
       Response response = await delete(Uri.parse(url));
-      print(response.body);
+
       _statusCodeException(response);
+      return _getObject(response.body);
     } on HttpUrlException {
       rethrow;
     } on HttpStatusCodeException {
