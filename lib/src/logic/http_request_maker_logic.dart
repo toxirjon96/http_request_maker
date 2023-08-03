@@ -21,6 +21,10 @@ class HttpRequestMakerLogic {
       print(e.message);
     } on JsonDecodeException catch (e) {
       print(e.message);
+    } on HttpStatusCodeException catch (e) {
+      print(e.message);
+    } on HttpRequstException catch (e) {
+      print(e.message);
     }
   }
 }
