@@ -59,6 +59,22 @@ class HttpRequestMaker<T> {
     }
   }
 
+  Future<void> deleteById(String subUrl) async {
+    try {
+      String url = "$baseUrl$subUrl";
+      _checkUrl(url);
+      Response response = await delete(Uri.parse(url));
+      print(response.body);
+      _statusCodeException(response);
+    } on HttpUrlException {
+      rethrow;
+    } on HttpStatusCodeException {
+      rethrow;
+    } catch (e) {
+      throw HttpRequstException(e.toString());
+    }
+  }
+
   Map<String, Object?> _jsonMap(String jsonString) {
     try {
       return jsonDecode(jsonString);

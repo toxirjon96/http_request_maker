@@ -15,7 +15,10 @@ class HttpRequestMakerLogic {
         baseUrl: baseUrl,
         convert: TodoModel.convert(),
       );
+
       print(await request.getRequestById("/todos/8"));
+      print(await request.getRequest("/todos"));
+      await request.deleteById("/todos/8");
     } on HttpUrlException catch (e) {
       print(e.message);
     } on JsonDecodeException catch (e) {
