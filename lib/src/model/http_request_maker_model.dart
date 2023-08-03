@@ -32,15 +32,32 @@ class HttpRequestMaker<T> {
 
   Future<List<T>?> getRequest(String subUrl) async {
     try {
-      _checkUrl("$baseUrl$subUrl");
-      Response response = await get(Uri.parse("$baseUrl$subUrl"));
-      if (response.statusCode == 200) {
-        return _getList(response.body);
-      } else {
-        throw HttpStatusCodeException(
-            "Request returns ${response.statusCode}.");
-      }
+      String url = "$baseUrl$subUrl";
+      _checkUrl(url);
+      Response response = await get(Uri.parse(url));
+      _statusCodeException(response);
+      return _getList(response.body);
     } on HttpUrlException {
+      rethrow;
+    } on JsonDecodeException {
+      rethrow;
+    } on HttpStatusCodeException {
+      rethrow;
+    } catch (e) {
+      throw HttpRequstException(e.toString());
+    }
+  }
+
+  Future<T?> getRequestById(String subUrl) async {
+    try {
+      String url = "$baseUrl$subUrl";
+      _checkUrl(url);
+      Response response = await get(Uri.parse(url));
+      _statusCodeException(response);
+      return _getObject(response.body);
+    } on HttpUrlException {
+      rethrow;
+    } on HttpStatusCodeException {
       rethrow;
     } catch (e) {
       throw HttpRequstException(e.toString());
@@ -64,11 +81,26 @@ class HttpRequestMaker<T> {
     }
   }
 
+  T? _getObject(String jsonString) {
+    try {
+      Map<String, Object?>? jsonMap = _jsonMap(jsonString);
+      return convert(jsonMap);
+    } on JsonDecodeException {
+      rethrow;
+    }
+  }
+
   void _checkUrl(String url) {
     try {
       Uri.parse(baseUrl);
     } catch (e) {
       throw HttpUrlException("This is not valid url.");
+    }
+  }
+
+  void _statusCodeException(Response response) {
+    if (response.statusCode != 200) {
+      throw HttpStatusCodeException("Request returns ${response.statusCode}.");
     }
   }
 }
