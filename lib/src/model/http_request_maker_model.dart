@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:http_request_maker/http_request_maker_library.dart';
 
 class HttpRequestMaker<T> {
@@ -25,11 +27,15 @@ class HttpRequestMaker<T> {
 
   T? Function(Map<String, Object?> json) get convert => _convert;
 
-  Future<List<T?>?> getRequest(String subUrl) async {
+  Future<List<T?>?> getRequest(String subUrl,
+      {Map<String, String>? headers}) async {
     try {
       String url = "$baseUrl$subUrl";
       _checkUrl(url);
-      Response response = await get(Uri.parse(url));
+      Response response = await get(
+        Uri.parse(url),
+        headers: headers,
+      );
       _statusCodeException(response);
       return _getElements(response.body);
     } on HttpUrlException {
@@ -43,11 +49,15 @@ class HttpRequestMaker<T> {
     }
   }
 
-  Future<T?> getRequestById(String subUrl) async {
+  Future<T?> getRequestById(String subUrl,
+      {Map<String, String>? headers}) async {
     try {
       String url = "$baseUrl$subUrl";
       _checkUrl(url);
-      Response response = await get(Uri.parse(url));
+      Response response = await get(
+        Uri.parse(url),
+        headers: headers,
+      );
       _statusCodeException(response);
       return _getObject(response.body);
     } on HttpUrlException {
@@ -59,12 +69,47 @@ class HttpRequestMaker<T> {
     }
   }
 
-  Future<T?> deleteById(String subUrl) async {
+  Future<T?> deleteById(
+    String subUrl, {
+    Object? body,
+    Encoding? encoding,
+    Map<String, String>? headers,
+  }) async {
     try {
       String url = "$baseUrl$subUrl";
       _checkUrl(url);
-      Response response = await delete(Uri.parse(url));
+      Response response = await delete(
+        Uri.parse(url),
+        body: body,
+        encoding: encoding,
+        headers: headers,
+      );
+      _statusCodeException(response);
+      return _getObject(response.body);
+    } on HttpUrlException {
+      rethrow;
+    } on HttpStatusCodeException {
+      rethrow;
+    } catch (e) {
+      throw HttpRequstException(e.toString());
+    }
+  }
 
+  Future<T?> updateById(
+    String subUrl, {
+    Object? body,
+    Encoding? encoding,
+    Map<String, String>? headers,
+  }) async {
+    try {
+      String url = "$baseUrl$subUrl";
+      _checkUrl(url);
+      Response response = await put(
+        Uri.parse(url),
+        body: body,
+        encoding: encoding,
+        headers: headers,
+      );
       _statusCodeException(response);
       return _getObject(response.body);
     } on HttpUrlException {

@@ -15,9 +15,21 @@ class HttpRequestMakerLogic {
         baseUrl: baseUrl,
         convert: TodoModel.convert(),
       );
-
-      print(await request.getRequestById("/todos/1"));
+      TodoModel? todo = await request.getRequestById("/todos/1");
+      print(todo);
       print(await request.getRequest("/todos"));
+
+      //update
+      if (todo != null) {
+        print(await request.updateById(
+          "/todos/1",
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({
+            "title": "Todo title changed",
+            "description": "Todo description changed",
+          }),
+        ));
+      }
       //print(await request.deleteById("/todos/9"));
     } on HttpUrlException catch (e) {
       print(e.message);
