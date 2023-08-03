@@ -7,7 +7,7 @@ class HttpRequestMakerLogic {
     todoRequest();
   }
 
-  void todoRequest() {
+  void todoRequest() async {
     String baseUrl = "https://64c9fb26b2980cec85c2ab91.mockapi.io";
 
     try {
@@ -16,7 +16,7 @@ class HttpRequestMakerLogic {
         convertList: TodoModel.convertList(),
         convert: TodoModel.convert(),
       );
-      print(request.getRequestById("/todos/8"));
+      print(await request.getRequestById("/todos/8"));
     } on HttpUrlException catch (e) {
       print(e.message);
     } on JsonDecodeException catch (e) {

@@ -92,7 +92,7 @@ class HttpRequestMaker<T> {
 
   void _checkUrl(String url) {
     try {
-      Uri.parse(baseUrl);
+      Uri.parse(url);
     } catch (e) {
       throw HttpUrlException("This is not valid url.");
     }
