@@ -1,6 +1,4 @@
-import 'package:http/http.dart';
 import 'package:http_request_maker/http_request_maker_library.dart';
-import 'package:http_request_maker/src/exception/http_request_ecxeption.dart';
 
 class HttpRequestMaker<T> {
   late final String _baseUrl;
@@ -32,13 +30,15 @@ class HttpRequestMaker<T> {
 
   T? Function(Map<String, Object?> json) get convert => _convert;
 
-  Future<List<T>> getRequest(String subUrl) async {
+  Future<List<T>?> getRequest(String subUrl) async {
     try {
       _checkUrl("$baseUrl$subUrl");
       Response response = await get(Uri.parse("$baseUrl$subUrl"));
       if (response.statusCode == 200) {
+        return _getList(response.body);
       } else {
-        throw HttpStatusCodeException("request return ${response.statusCode}");
+        throw HttpStatusCodeException(
+            "Request returns ${response.statusCode}.");
       }
     } on HttpUrlException {
       rethrow;
@@ -47,11 +47,28 @@ class HttpRequestMaker<T> {
     }
   }
 
+  Map<String, Object?> _jsonMap(String jsonString) {
+    try {
+      return jsonDecode(jsonString);
+    } catch (e) {
+      throw JsonDecodeException("This is not valid format of json.");
+    }
+  }
+
+  List<T>? _getList(String jsonString) {
+    try {
+      Map<String, Object?>? jsonMap = _jsonMap(jsonString);
+      return convertList(jsonMap);
+    } on JsonDecodeException {
+      rethrow;
+    }
+  }
+
   void _checkUrl(String url) {
     try {
       Uri.parse(baseUrl);
     } catch (e) {
-      throw HttpUrlException("This is not valid url");
+      throw HttpUrlException("This is not valid url.");
     }
   }
 }

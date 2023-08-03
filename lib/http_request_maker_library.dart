@@ -5,8 +5,10 @@ export 'dart:io';
 export 'dart:convert';
 
 //http
+export 'package:http/http.dart';
 
 //exception
 export 'package:http_request_maker/src/exception/http_url_exception.dart';
 export 'package:http_request_maker/src/exception/http_statuscode_exception.dart';
 export 'package:http_request_maker/src/exception/http_request_ecxeption.dart';
+export 'package:http_request_maker/src/exception/json_decode_exception.dart';
