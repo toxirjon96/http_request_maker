@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:http_request_maker/http_request_maker_library.dart';
 
 class HttpRequestMaker<T> {
