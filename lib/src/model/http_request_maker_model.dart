@@ -2,16 +2,13 @@ import 'package:http_request_maker/http_request_maker_library.dart';
 
 class HttpRequestMaker<T> {
   late final String _baseUrl;
-  late final List<T>? Function(Map<String, Object?> json) _convertList;
   late final T? Function(Map<String, Object?> json) _convert;
 
   HttpRequestMaker({
     required String baseUrl,
-    required List<T>? Function(Map<String, Object?> json) convertList,
     required T? Function(Map<String, Object?> json) convert,
   }) {
     this.baseUrl = baseUrl;
-    _convertList = convertList;
     _convert = convert;
   }
 
@@ -26,17 +23,15 @@ class HttpRequestMaker<T> {
 
   String get baseUrl => _baseUrl;
 
-  List<T>? Function(Map<String, Object?> json) get convertList => _convertList;
-
   T? Function(Map<String, Object?> json) get convert => _convert;
 
-  Future<List<T>?> getRequest(String subUrl) async {
+  Future<List<T?>?> getRequest(String subUrl) async {
     try {
       String url = "$baseUrl$subUrl";
       _checkUrl(url);
       Response response = await get(Uri.parse(url));
       _statusCodeException(response);
-      return _getList(response.body);
+      return _getElements(response.body);
     } on HttpUrlException {
       rethrow;
     } on JsonDecodeException {
@@ -72,13 +67,36 @@ class HttpRequestMaker<T> {
     }
   }
 
-  List<T>? _getList(String jsonString) {
+  List<Object?>? _jsonStringList(String jsonString) {
+    List<Object?>? jsonStringList;
     try {
-      Map<String, Object?>? jsonMap = _jsonMap(jsonString);
-      return convertList(jsonMap);
-    } on JsonDecodeException {
-      rethrow;
+      jsonStringList = jsonDecode(jsonString);
+    } catch (e) {
+      print("This is not json data!");
     }
+    return jsonStringList;
+  }
+
+  List<Map<String, Object?>>? _jsonMapList(String jsonString) {
+    List<Map<String, Object?>>? result;
+
+    List<Object?>? jsonStringList = _jsonStringList(jsonString);
+    if (jsonStringList != null) {
+      result = jsonStringList.whereType<Map<String, Object?>>().toList();
+    }
+    return result;
+  }
+
+  List<T?>? _getElements(String jsonString) {
+    List<Map<String, Object?>>? jsonMap = _jsonMapList(jsonString);
+    List<T?>? result;
+
+    if (jsonMap != null) {
+      result = jsonMap.map((e) {
+        return convert(e);
+      }).toList();
+    }
+    return result;
   }
 
   T? _getObject(String jsonString) {

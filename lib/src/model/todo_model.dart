@@ -22,22 +22,6 @@ class TodoModel {
         return TodoModel.fromJson(json);
       };
 
-  static List<TodoModel> Function(Map<String, Object?> map) convertList() =>
-      (Map<String, Object?> map) {
-        List<TodoModel>? todoList = [];
-        List<Object?> list = map["todos"] as List<Object?>;
-
-        todoList = list
-            .map((e) {
-              if (e is Map<String, Object?>) {
-                return convert()(e);
-              }
-            })
-            .cast<TodoModel>()
-            .toList();
-        return todoList;
-      };
-
   @override
   String toString() {
     return "$runtimeType{id: $id, title: $title, description:$description}";

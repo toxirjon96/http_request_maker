@@ -13,7 +13,6 @@ class HttpRequestMakerLogic {
     try {
       HttpRequestMaker request = HttpRequestMaker(
         baseUrl: baseUrl,
-        convertList: TodoModel.convertList(),
         convert: TodoModel.convert(),
       );
       print(await request.getRequestById("/todos/8"));
