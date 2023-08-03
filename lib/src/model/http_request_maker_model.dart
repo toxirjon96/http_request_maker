@@ -67,36 +67,32 @@ class HttpRequestMaker<T> {
     }
   }
 
-  List<Object?>? _jsonStringList(String jsonString) {
-    List<Object?>? jsonStringList;
+  List<Object?> _jsonStringList(String jsonString) {
     try {
-      jsonStringList = jsonDecode(jsonString);
+      return jsonDecode(jsonString);
     } catch (e) {
-      print("This is not json data!");
+      throw JsonDecodeException("This is not valid format of json.");
     }
-    return jsonStringList;
   }
 
-  List<Map<String, Object?>>? _jsonMapList(String jsonString) {
-    List<Map<String, Object?>>? result;
-
-    List<Object?>? jsonStringList = _jsonStringList(jsonString);
-    if (jsonStringList != null) {
-      result = jsonStringList.whereType<Map<String, Object?>>().toList();
+  List<Map<String, Object?>> _jsonMapList(String jsonString) {
+    try {
+      List<Object?> jsonStringList = _jsonStringList(jsonString);
+      return jsonStringList.whereType<Map<String, Object?>>().toList();
+    } on JsonDecodeException {
+      rethrow;
     }
-    return result;
   }
 
   List<T?>? _getElements(String jsonString) {
-    List<Map<String, Object?>>? jsonMap = _jsonMapList(jsonString);
-    List<T?>? result;
-
-    if (jsonMap != null) {
-      result = jsonMap.map((e) {
+    try {
+      List<Map<String, Object?>> jsonMap = _jsonMapList(jsonString);
+      return jsonMap.map((e) {
         return convert(e);
       }).toList();
+    } on JsonDecodeException {
+      rethrow;
     }
-    return result;
   }
 
   T? _getObject(String jsonString) {
