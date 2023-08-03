@@ -10,6 +10,7 @@ export 'package:http/http.dart';
 //model
 export 'package:http_request_maker/src/model/http_request_maker_model.dart';
 export 'package:http_request_maker/src/model/todo_model.dart';
+export 'package:http_request_maker/src/model/users_model.dart';
 
 //logic
 export 'package:http_request_maker/src/logic/http_request_maker_logic.dart';

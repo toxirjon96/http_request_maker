@@ -4,12 +4,13 @@ class HttpRequestMakerLogic {
   const HttpRequestMakerLogic();
 
   void call() {
-    todoRequest();
-  }
-
-  void todoRequest() async {
     String baseUrl = "https://64c9fb26b2980cec85c2ab91.mockapi.io";
 
+    //todoRequest(baseUrl);
+    usersRequest(baseUrl);
+  }
+
+  void todoRequest(String baseUrl) async {
     try {
       HttpRequestMaker request = HttpRequestMaker(
         baseUrl: baseUrl,
@@ -37,7 +38,49 @@ class HttpRequestMakerLogic {
           "description": "Todo description created"
         }),
       ));
-      print(await request.deleteById("/todos/7"));
+      print(await request.deleteById("/todos/12"));
+    } on HttpUrlException catch (e) {
+      print(e.message);
+    } on JsonDecodeException catch (e) {
+      print(e.message);
+    } on HttpStatusCodeException catch (e) {
+      print(e.message);
+    } on HttpRequstException catch (e) {
+      print(e.message);
+    }
+  }
+
+  void usersRequest(String baseUrl) async {
+    try {
+      HttpRequestMaker request = HttpRequestMaker(
+        baseUrl: baseUrl,
+        convert: Users.convert(),
+      );
+
+      print(await request.getRequestById("/users/1"));
+      print(await request.getRequest("/users"));
+      //update
+      print(await request.updateById(
+        "/users/1",
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "name": "Raj Kapoor",
+        }),
+      ));
+
+      //post
+      print(await request.postRequest(
+        "/users",
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(<String, String>{
+          "name": "Gupta",
+          "country": "India",
+          "email": "gupta@gmail.com",
+          "phone": "+78988888818",
+          "createdAt": "${DateTime.now()}",
+        }),
+      ));
+      print(await request.deleteById("/users/12"));
     } on HttpUrlException catch (e) {
       print(e.message);
     } on JsonDecodeException catch (e) {
