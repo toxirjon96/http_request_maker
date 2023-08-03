@@ -27,7 +27,17 @@ class HttpRequestMakerLogic {
           "description": "Todo description changed",
         }),
       ));
-      //print(await request.deleteById("/todos/9"));
+
+      //post
+      print(await request.postRequest(
+        "/todos",
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(<String, String>{
+          "title": "Todo title created",
+          "description": "Todo description created"
+        }),
+      ));
+      print(await request.deleteById("/todos/7"));
     } on HttpUrlException catch (e) {
       print(e.message);
     } on JsonDecodeException catch (e) {

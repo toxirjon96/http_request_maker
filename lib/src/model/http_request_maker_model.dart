@@ -34,11 +34,38 @@ class HttpRequestMaker<T> {
         Uri.parse(url),
         headers: headers,
       );
-      _statusCodeException(response);
+      _statusCodeException(response, 200);
       return _getElements(response.body);
     } on HttpUrlException {
       rethrow;
     } on JsonDecodeException {
+      rethrow;
+    } on HttpStatusCodeException {
+      rethrow;
+    } catch (e) {
+      throw HttpRequstException(e.toString());
+    }
+  }
+
+  Future<T?> postRequest(
+    String subUrl, {
+    Object? body,
+    Encoding? encoding,
+    Map<String, String>? headers,
+  }) async {
+    try {
+      String url = "$baseUrl$subUrl";
+      _checkUrl(url);
+
+      Response response = await post(
+        Uri.parse(url),
+        body: body,
+        encoding: encoding,
+        headers: headers,
+      );
+      _statusCodeException(response, 201);
+      return _getObject(response.body);
+    } on HttpUrlException {
       rethrow;
     } on HttpStatusCodeException {
       rethrow;
@@ -56,7 +83,7 @@ class HttpRequestMaker<T> {
         Uri.parse(url),
         headers: headers,
       );
-      _statusCodeException(response);
+      _statusCodeException(response, 200);
       return _getObject(response.body);
     } on HttpUrlException {
       rethrow;
@@ -82,7 +109,7 @@ class HttpRequestMaker<T> {
         encoding: encoding,
         headers: headers,
       );
-      _statusCodeException(response);
+      _statusCodeException(response, 200);
       return _getObject(response.body);
     } on HttpUrlException {
       rethrow;
@@ -108,7 +135,7 @@ class HttpRequestMaker<T> {
         encoding: encoding,
         headers: headers,
       );
-      _statusCodeException(response);
+      _statusCodeException(response, 200);
       return _getObject(response.body);
     } on HttpUrlException {
       rethrow;
@@ -172,8 +199,8 @@ class HttpRequestMaker<T> {
     }
   }
 
-  void _statusCodeException(Response response) {
-    if (response.statusCode != 200) {
+  void _statusCodeException(Response response, int statuscode) {
+    if (response.statusCode != statuscode) {
       throw HttpStatusCodeException("Request returns ${response.statusCode}.");
     }
   }
