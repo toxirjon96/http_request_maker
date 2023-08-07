@@ -68,6 +68,14 @@ class HttpRequestMakerLogic {
         }),
       ));
 
+      print(await request.updateById(
+        "/users/2",
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "name": "Jack Wall",
+        }),
+      ));
+
       //post
       print(await request.postRequest(
         "/users",
