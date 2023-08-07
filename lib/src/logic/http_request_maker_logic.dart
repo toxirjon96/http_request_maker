@@ -64,7 +64,7 @@ class HttpRequestMakerLogic {
         "/users/1",
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "name": "Raj Kapoor",
+          "name": "John Wick",
         }),
       ));
 
@@ -80,7 +80,18 @@ class HttpRequestMakerLogic {
           "createdAt": "${DateTime.now()}",
         }),
       ));
-      print(await request.deleteById("/users/12"));
+      print(await request.postRequest(
+        "/users",
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode(<String, String>{
+          "name": "Raj Kapoor",
+          "country": "India",
+          "email": "kapoor@gmail.com",
+          "phone": "+78988888818",
+          "createdAt": "${DateTime.now()}",
+        }),
+      ));
+      //print(await request.deleteById("/users/12"));
     } on HttpUrlException catch (e) {
       print(e.message);
     } on JsonDecodeException catch (e) {
